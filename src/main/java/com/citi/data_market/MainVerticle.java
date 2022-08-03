@@ -17,10 +17,10 @@ public class MainVerticle extends AbstractVerticle {
   public void start(Promise<Void> startPromise) throws Exception {
     //Initialize Router
     router = Router.router(vertx);
-    //初始化ThymeleafTemplateEngine
+    //Initialize ThymeleafTemplateEngine
     thymeleafTemplateEngine = ThymeleafTemplateEngine.create(vertx);
     //set the static source
-    router.route("/*").handler(StaticHandler.create());
+    router.route("/static/assets/*").handler(StaticHandler.create());
 
     //config Router url
     router.route("/").handler(
@@ -41,12 +41,14 @@ public class MainVerticle extends AbstractVerticle {
           });
       }
     );
-    router.route("/form.html").handler(
-      req->{
+    router.route("/:page").handler(
+      req -> {
+        var page = req.request().getParam("page");
         var obj = new JsonObject();
         obj.put("db_nums", 123456);
+        //ThymeleafTemplateEngine render
         thymeleafTemplateEngine.render(obj,
-          "templates/form.html",
+          "templates/"+page,
           bufferAsyncResult -> {
             if (bufferAsyncResult.succeeded()){
               req.response()
@@ -58,12 +60,11 @@ public class MainVerticle extends AbstractVerticle {
           });
       }
     );
-
     //Router bounding with vertx HttpServer
     vertx.createHttpServer().requestHandler(router).listen(8888, http -> {
       if (http.succeeded()) {
         startPromise.complete();
-        System.out.println("HTTP server started on port 8888");
+        log.info("HTTP server started on port 8888");
       } else {
         startPromise.fail(http.cause());
       }

@@ -20,9 +20,9 @@ public class MysqlVerticle extends AbstractVerticle {
   MySQLConnectOptions connectOptions = new MySQLConnectOptions()
     .setPort(3306)
     .setHost("127.0.0.1")
-    .setDatabase("db")
+    .setDatabase("mysql")
     .setUser("root")
-    .setPassword("password");
+    .setPassword("Suri52022$");
 
   //第二步 配置连接池 Pool options
   PoolOptions poolOptions = new PoolOptions()
@@ -55,17 +55,14 @@ public class MysqlVerticle extends AbstractVerticle {
         client.getConnection(ar1 -> {
           if(ar1.succeeded()){
             System.out.println("Connected");
-
             //Obtain our connection
             SqlConnection conn = ar1.result();
-
             //All operations execute on the same connection
             conn
               .query("select id, name, age, info from person")
               .execute(ar2 -> {
                 //Release the connection to the pool
                 conn.close();
-
                 if(ar2.succeeded()){
                   var list = new ArrayList<JsonObject>();
                   ar2.result().forEach(item -> {
