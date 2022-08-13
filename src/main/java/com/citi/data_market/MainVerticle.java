@@ -20,7 +20,7 @@ public class MainVerticle extends AbstractVerticle {
     //Initialize ThymeleafTemplateEngine
     thymeleafTemplateEngine = ThymeleafTemplateEngine.create(vertx);
     //set the static source
-    router.route("/static/assets/*").handler(StaticHandler.create());
+    router.route("/static/*").handler(StaticHandler.create());
 
     //config Router url
     router.route("/").handler(
